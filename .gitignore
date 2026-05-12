@@ -1,0 +1,57 @@
+# ── Environment & Secrets ─────────────────────────────────────
+.env
+*.env
+
+# ── Service Account Keys (NEVER commit these!) ────────────────
+service-account*.json
+*service_account*.json
+*-credentials.json
+credentials.json
+
+# ── Streamlit Cloud Secrets ────────────────────────────────────
+.streamlit/secrets.toml
+
+# ── Python ────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# ── Virtual Environments ──────────────────────────────────────
+venv/
+.venv/
+env/
+ENV/
+
+# ── IDE ───────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Logs ──────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── Docker ────────────────────────────────────────────────────
+.dockerignore
+
+# ── Testing ───────────────────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Misc ──────────────────────────────────────────────────────
+*.tmp
+*.bak

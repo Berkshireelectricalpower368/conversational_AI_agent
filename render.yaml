@@ -1,0 +1,36 @@
+# Render Blueprint — Multi-service deployment
+# Deploy with: render blueprint deploy
+
+services:
+  # FastAPI Backend
+  - type: web
+    name: drive-discovery-backend
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GOOGLE_API_KEY
+        sync: false  # Set manually in Render dashboard
+      - key: GOOGLE_SERVICE_ACCOUNT_FILE
+        sync: false
+      - key: GOOGLE_DRIVE_FOLDER_ID
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-2.0-flash
+      - key: LOG_LEVEL
+        value: INFO
+
+  # Streamlit Frontend
+  - type: web
+    name: drive-discovery-frontend
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
+    envVars:
+      - key: BACKEND_URL
+        fromService:
+          name: drive-discovery-backend
+          type: web
+          property: hostport

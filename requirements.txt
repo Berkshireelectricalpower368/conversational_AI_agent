@@ -1,0 +1,27 @@
+# ============================================================
+# Google Drive File Discovery Assistant — Dependencies
+# ============================================================
+
+# ── Backend: FastAPI ─────────────────────────────────────────
+fastapi>=0.115.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.9.0
+pydantic-settings>=2.5.0
+
+# ── AI: LangChain + Gemini ───────────────────────────────────
+langchain>=0.3.0
+langchain-google-genai>=2.0.0
+langchain-core>=0.3.0
+
+# ── Google Drive API ─────────────────────────────────────────
+google-api-python-client>=2.150.0
+google-auth>=2.35.0
+
+# ── Frontend: Streamlit ──────────────────────────────────────
+streamlit>=1.40.0
+
+# ── Utilities ────────────────────────────────────────────────
+requests>=2.32.0
+python-dotenv>=1.0.0
+python-dateutil>=2.9.0
+cachetools>=5.5.0
