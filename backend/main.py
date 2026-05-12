@@ -81,11 +81,11 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:8501",       # Local Streamlit
+        "http://localhost:8501", 
+        "https://drive-discovery.streamlit.app",      
         "http://localhost:3000",       # Alternative frontend port
         "https://*.streamlit.app",     # Streamlit Cloud
         "https://*.onrender.com",      # Render deployments
-        "https://*.railway.app",       # Railway deployments
         "*",                           # Allow all for development
     ],
     allow_credentials=True,
